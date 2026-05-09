@@ -1,0 +1,27 @@
+VCD info: dumpfile crossbar_tb.vcd opened for output.
+=== Crossbar MAC Testbench ===
+Loading weight matrix:
+  [[ 1, -1,  1, -1],
+   [ 1,  1, -1, -1],
+   [-1,  1,  1, -1],
+   [-1, -1, -1,  1]]
+
+Weights loaded successfully
+
+Applying inputs: [10, 20, 30, 40]
+
+=== Results ===
+Expected outputs:
+  out[0] = (1*10) + (1*20) + (-1*30) + (-1*40) = 10 + 20 - 30 - 40 = -40
+  out[1] = (-1*10) + (1*20) + (1*30) + (-1*40) = -10 + 20 + 30 - 40 = 0
+  out[2] = (1*10) + (-1*20) + (1*30) + (-1*40) = 10 - 20 + 30 - 40 = -20
+  out[3] = (-1*10) + (-1*20) + (-1*30) + (1*40) = -10 - 20 - 30 + 40 = -20
+
+Actual outputs:
+  out[0] = -40     ÿÿÿ“
+  out[1] = 0     ÿÿÿ“
+  out[2] = -20     ÿÿÿ“
+  out[3] = -20     ÿÿÿ“
+
+=== TEST PASSED ===
+crossbar_tb.sv:143: $finish called at 435000 (1ps)
