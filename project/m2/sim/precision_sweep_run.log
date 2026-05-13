@@ -1,0 +1,40 @@
+make -f /home/andrew/repo/ece410-hw4ai-sp26/project/.venv/lib/python3.13/site-packages/cocotb_tools/makefiles/Makefile.sim \
+	TOPLEVEL=tb_snn_mac_array \
+	VERILOG_SOURCES="/home/andrew/repo/ece410-hw4ai-sp26/project/m2/tb/../rtl/snn_mac.sv /home/andrew/repo/ece410-hw4ai-sp26/project/m2/tb/../rtl/snn_mac_array.sv /home/andrew/repo/ece410-hw4ai-sp26/project/m2/tb/tb_snn_mac_array.sv" \
+	COCOTB_TEST_MODULES=test_precision_sweep \
+	SIM_BUILD=sim_build_precision_sweep
+make[1]: Entering directory '/home/andrew/repo/ece410-hw4ai-sp26/project/m2/tb'
+rm -f results.xml
+"make" -f /home/andrew/repo/ece410-hw4ai-sp26/project/.venv/lib/python3.13/site-packages/cocotb_tools/makefiles/Makefile.sim results.xml
+make[2]: Entering directory '/home/andrew/repo/ece410-hw4ai-sp26/project/m2/tb'
+rm -f results.xml
+COCOTB_TEST_MODULES=test_precision_sweep COCOTB_TESTCASE= COCOTB_TEST_FILTER= COCOTB_TOPLEVEL=tb_snn_mac_array TOPLEVEL_LANG=verilog \
+         /usr/bin/vvp -M /home/andrew/repo/ece410-hw4ai-sp26/project/.venv/lib/python3.13/site-packages/cocotb/libs -m libcocotbvpi_icarus   sim_build_precision_sweep/sim.vvp   
+     -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:93   in _embed_init_python              Using Python 3.13.0rc1 interpreter at /home/andrew/repo/ece410-hw4ai-sp26/project/.venv/bin/python3
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
+     0.00ns INFO     cocotb                             Running on Icarus Verilog version 12.0 (stable)
+     0.00ns INFO     cocotb                             Seeding Python random module with 1777834145
+     0.00ns INFO     cocotb                             Initialized cocotb v2.0.1 from /home/andrew/repo/ece410-hw4ai-sp26/project/.venv/lib/python3.13/site-packages/cocotb
+     0.00ns INFO     cocotb                             Running tests
+     0.00ns INFO     cocotb.regression                  running test_precision_sweep.test_quantization_error_sweep (1/1)
+                                                            Compare DUT INT8 dot products to FP32 reference over 100 random trials.
+402050.00ns INFO     cocotb.tb_snn_mac_array            ======================================================================
+402050.00ns INFO     cocotb.tb_snn_mac_array            INT8 MAC quantization error sweep
+402050.00ns INFO     cocotb.tb_snn_mac_array              trials=100, dot-length=200, PEs=8, samples=800
+402050.00ns INFO     cocotb.tb_snn_mac_array              ref dynamic range : [-14.5655, +13.5069]
+402050.00ns INFO     cocotb.tb_snn_mac_array              MAE               : 0.021371  (relative: 0.076 %)
+402050.00ns INFO     cocotb.tb_snn_mac_array              RMS error         : 0.026740
+402050.00ns INFO     cocotb.tb_snn_mac_array              max abs error     : 0.080797  (relative: 0.288 %)
+402050.00ns INFO     cocotb.tb_snn_mac_array              predicted RMS     : 0.037118  (zero-mean accumulation model)
+402050.00ns INFO     cocotb.tb_snn_mac_array              worst-case bound  : 1.574803  (correlated rounding upper bound)
+402050.00ns INFO     cocotb.tb_snn_mac_array            ======================================================================
+402050.00ns INFO     cocotb.regression                  test_precision_sweep.test_quantization_error_sweep passed
+402050.00ns INFO     cocotb.regression                  ************************************************************************************************************
+                                                        ** TEST                                                STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        ************************************************************************************************************
+                                                        ** test_precision_sweep.test_quantization_error_sweep   PASS      402050.00           1.39     288796.73  **
+                                                        ************************************************************************************************************
+                                                        ** TESTS=1 PASS=1 FAIL=0 SKIP=0                                   402050.00           1.39     288634.55  **
+                                                        ************************************************************************************************************
+make[2]: Leaving directory '/home/andrew/repo/ece410-hw4ai-sp26/project/m2/tb'
+make[1]: Leaving directory '/home/andrew/repo/ece410-hw4ai-sp26/project/m2/tb'
