@@ -1,0 +1,5 @@
+create_clock -name clk -period 20.0 [get_ports clk]
+set_input_delay  2.0 -clock clk [all_inputs]
+set_output_delay 2.0 -clock clk [all_outputs]
+set_driving_cell -lib_cell sky130_fd_sc_hd__inv_2 [all_inputs]
+set_load 33.442 [all_outputs]

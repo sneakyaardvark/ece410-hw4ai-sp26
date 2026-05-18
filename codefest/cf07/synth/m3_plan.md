@@ -1,0 +1,3 @@
+# M3 Synthesis Plan (Option A)
+
+The big issue is with the SRAM, which takes up a large area, has unacceptable worst-case slack, and far too large of a fanout. To fix the slack issues and to reduce the area and fanout, the memory should be constructed from an SRAM macro instead of being inferred as flip-flops (~320,000 of them!). This is relatively simple: sky130 supports OpenRAM, so a verilog macro can be used to compose banks to cover the my needed SRAM size. Nothing else has to be changed, though much of the MAC logic is already planned to be replaced (I have already been working on it). Otherwise, the other timing, linting, stats are non-existent or well within exceptable ranges.
