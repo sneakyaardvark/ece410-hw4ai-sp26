@@ -1,0 +1,57 @@
+     of which used for sequential elements: 6543095.347194 (100.00%)
+
+=== design hierarchy ===
+
+   compute_core                      1
+     $paramod$0ea9b65b0109ffb7da0bbf2c2727f2af7bc4fe91\snn_lif_bank      1
+       $paramod$0ff0ed79aec8fcf2811369b43216de7bdf22529c\snn_lif_cell    200
+     $paramod$8fb93e4668e650de2634f2e282e346b1e72b2a00\snn_mac_array      1
+       $paramod$723d8238d69e25d1c3e3a8cf126f1409ce182cda\snn_mac      8
+
+   Number of wires:             561266
+   Number of wire bits:         3043596
+   Number of public wires:        8729
+   Number of public wire bits:  406507
+   Number of ports:               1694
+   Number of port bits:          21558
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:             2540647
+     $_AND_                     781407
+     $_MUX_                     687212
+     $_NOT_                       6718
+     $_OR_                      247901
+     $_XOR_                     477248
+     sky130_fd_sc_hd__dfxtp_1   340161
+
+   Area for cell type $_NOT_ is unknown!
+   Area for cell type $_AND_ is unknown!
+   Area for cell type $_OR_ is unknown!
+   Area for cell type $_XOR_ is unknown!
+   Area for cell type $_MUX_ is unknown!
+
+   Chip area for top module '\compute_core': 6809751.091194
+     of which used for sequential elements: 800.768000 (0.01%)
+
+10. Executing Verilog backend.
+
+10.1. Executing BMUXMAP pass.
+
+10.2. Executing DEMUXMAP pass.
+Dumping module `$paramod$0ea9b65b0109ffb7da0bbf2c2727f2af7bc4fe91\snn_lif_bank'.
+Dumping module `$paramod$0ff0ed79aec8fcf2811369b43216de7bdf22529c\snn_lif_cell'.
+Dumping module `$paramod$723d8238d69e25d1c3e3a8cf126f1409ce182cda\snn_mac'.
+Dumping module `$paramod$8fb93e4668e650de2634f2e282e346b1e72b2a00\snn_mac_array'.
+Dumping module `\compute_core'.
+
+Warnings: 26 unique messages, 234 total
+End of script. Logfile hash: 0d48f57f67, CPU: user 163.68s system 2.71s, MEM: 2971.89 MB peak
+Yosys 0.46 (git sha1 e97731b9dda91fa5fa53ed87df7c34163ba59a41, clang++ 17.0.6 -fPIC -O3)
+
+--- Run info ---
+Tool: Yosys 0.46 (-noabc -nofsm -noalumacc)
+PDK:  sky130A  sky130_fd_sc_hd  tt_025C_1v80
+DFF mapping: sky130_fd_sc_hd__dfxtp_1 (drive strength 1)
+Combinational cells remain as generic gates (no ABC technology mapping).
+For fully mapped stats see stat.rpt (OpenLane Classic + ABC DELAY_0, ~3.5h).

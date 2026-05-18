@@ -1,0 +1,24 @@
+DESIGN_NAME: compute_core
+VERILOG_FILES:
+  - dir::hdl/synth_top.sv
+  - dir::hdl/snn_lif_bank.sv
+  - dir::hdl/snn_lif_cell.sv
+  - dir::hdl/snn_mac.sv
+  - dir::hdl/snn_mac_array.sv
+
+CLOCK_PORT: clk
+CLOCK_PERIOD: 20.0
+
+# sky130 target
+PDK: sky130A
+STD_CELL_LIBRARY: sky130_fd_sc_hd
+
+# Floorplan — small area estimate; tune after synthesis area report
+FP_CORE_UTIL: 40
+DIE_AREA: [0, 0, 800, 800]
+FP_PDN_VOFFSET: 5
+FP_PDN_HOFFSET: 5
+
+# Synthesis options
+SYNTH_STRATEGY: DELAY 0
+MAX_FANOUT_CONSTRAINT: 10
