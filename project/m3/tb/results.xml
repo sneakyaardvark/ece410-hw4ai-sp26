@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1779559120" />
+    <testcase name="test_wave_inference" classname="test_wave" file="/home/andrew/repo/ece410-hw4ai-sp26/project/m3/tb/test_wave.py" lineno="125" time="1.1316921710968018" sim_time_ns="451470.0" ratio_time="398933.57180552813" />
+  </testsuite>
+</testsuites>
