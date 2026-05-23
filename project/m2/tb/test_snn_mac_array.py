@@ -2,9 +2,11 @@
 
 Tests:
   - reset clears all 8 accumulators
-  - basic dot product: 8 PEs × N activations, compared against numpy reference
+  - basic dot product: 8 PEs × N spikes=1, compared against numpy reference
+  - spike=0 contributes nothing to any accumulator
   - acc_clear resets all PEs between tile groups
   - simultaneous weight_load + act_valid: new weight takes effect immediately
+    (verified by checking spike=[1,0]: only first weight contributes)
   - representative matrix-vector multiply: 8 outputs × 200 inputs (v1 tile size),
     random INT8 weights and binary spike activations, compared against numpy
 """
@@ -14,9 +16,8 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, FallingEdge
 
-N        = 8    # number of PEs
+N        = 8
 WEIGHT_W = 8
-ACT_W    = 8
 ACC_W    = 32
 
 
@@ -34,7 +35,6 @@ def unpack_acc(raw: int) -> list[int]:
     out = []
     for i in range(N):
         word = (raw >> (i * 32)) & 0xFFFFFFFF
-        # sign-extend from 32 bits
         if word >= (1 << 31):
             word -= (1 << 32)
         out.append(word)
@@ -58,24 +58,25 @@ async def init(dut):
     await RisingEdge(dut.clk)
 
 
-async def run_matvec(dut, weights_matrix: np.ndarray, activations: np.ndarray):
-    """Stream one tile: weights_matrix[T×N] and activations[T], simultaneously.
+async def run_matvec(dut, weights_matrix: np.ndarray, spikes: np.ndarray):
+    """Stream one tile: weights_matrix[T×N] and spikes[T] (binary), simultaneously.
 
     Each cycle t: weight_load=1, weight_in=weights_matrix[t], act_valid=1,
-    act_in=activations[t]. The forwarding mux in snn_pe ensures weight_in[t]
-    pairs with activations[t] with no pipeline stall.
+    act_in=spikes[t]. The forwarding mux in snn_mac ensures weight_in[t]
+    pairs with spikes[t] with no pipeline stall.
     """
-    T = len(activations)
+    T = len(spikes)
     assert weights_matrix.shape == (T, N)
 
     dut.weight_load.value = 1
     dut.act_valid.value   = 1
     for t in range(T):
         dut.weight_in.value = int(pack_weights(weights_matrix[t].tolist()))
-        dut.act_in.value    = int(activations[t])
+        dut.act_in.value    = int(spikes[t])
         await RisingEdge(dut.clk)
     dut.weight_load.value = 0
     dut.act_valid.value   = 0
+    dut.act_in.value      = 0
 
 
 async def clear(dut):
@@ -100,15 +101,27 @@ async def test_reset(dut):
 
 @cocotb.test()
 async def test_basic_dot_product(dut):
-    """Small known case: weight=3 for all PEs, 4 activations of value 2 → acc=24."""
+    """Small known case: weight=3 for all PEs, 4 spikes=1 → acc=12."""
     await init(dut)
     weights = np.full((4, N), 3, dtype=np.int8)
-    acts    = np.full(4, 2, dtype=np.int8)
-    await run_matvec(dut, weights, acts)
+    spikes  = np.ones(4, dtype=np.uint8)
+    await run_matvec(dut, weights, spikes)
     await FallingEdge(dut.clk)
     result   = unpack_acc(dut.acc_out.value.to_unsigned())
-    expected = [3 * 2 * 4] * N  # 24
+    expected = [3 * 4] * N  # 12
     assert result == expected, f"Expected {expected}, got {result}"
+
+
+@cocotb.test()
+async def test_spike_zero_no_contribution(dut):
+    """Spike=0 must not change any accumulator."""
+    await init(dut)
+    weights = np.full((4, N), 99, dtype=np.int8)
+    spikes  = np.zeros(4, dtype=np.uint8)
+    await run_matvec(dut, weights, spikes)
+    await FallingEdge(dut.clk)
+    result = unpack_acc(dut.acc_out.value.to_unsigned())
+    assert result == [0] * N, f"Expected all zeros (no spikes), got {result}"
 
 
 @cocotb.test()
@@ -117,20 +130,20 @@ async def test_acc_clear_between_tiles(dut):
     await init(dut)
     rng = np.random.default_rng(0)
 
-    # First tile
-    w1   = rng.integers(-128, 128, (10, N), dtype=np.int8)
-    acts1 = rng.integers(-128, 128, 10, dtype=np.int8)
-    await run_matvec(dut, w1, acts1)
+    # First tile — random weights, ~50% spikes
+    w1     = rng.integers(-128, 128, (10, N), dtype=np.int8)
+    spikes1 = rng.integers(0, 2, 10, dtype=np.uint8)
+    await run_matvec(dut, w1, spikes1)
     await clear(dut)
 
     # Second tile
-    w2    = rng.integers(-128, 128, (6, N), dtype=np.int8)
-    acts2 = rng.integers(-128, 128, 6, dtype=np.int8)
-    await run_matvec(dut, w2, acts2)
+    w2     = rng.integers(-128, 128, (6, N), dtype=np.int8)
+    spikes2 = rng.integers(0, 2, 6, dtype=np.uint8)
+    await run_matvec(dut, w2, spikes2)
     await FallingEdge(dut.clk)
 
     result   = unpack_acc(dut.acc_out.value.to_unsigned())
-    expected = (w2.astype(np.int32) * acts2.astype(np.int32)[:, None]).sum(axis=0).tolist()
+    expected = (w2.astype(np.int32) * spikes2.astype(np.int32)[:, None]).sum(axis=0).tolist()
     assert result == expected, f"Expected {expected}, got {result}"
 
 
@@ -138,50 +151,34 @@ async def test_acc_clear_between_tiles(dut):
 async def test_simultaneous_weight_and_act(dut):
     """Verify weight_in is used immediately when weight_load and act_valid coincide.
 
-    If the forwarding mux is absent, weight[t] would pair with act[t+1], producing
-    a wrong result detectable by this test.
+    Uses spikes=[1, 0]: only the first weight row contributes. If the forwarding
+    mux is absent (stale weight_reg=0 used at t=0), the result would be all zeros.
     """
     await init(dut)
-    # Distinct weights per cycle so a mis-pairing gives a different sum.
     weights = np.array([[1, 2, 3, 4, 5, 6, 7, 8],
                         [8, 7, 6, 5, 4, 3, 2, 1]], dtype=np.int8)
-    acts    = np.array([10, 20], dtype=np.int8)
-    await run_matvec(dut, weights, acts)
+    spikes  = np.array([1, 0], dtype=np.uint8)   # only first row active
+    await run_matvec(dut, weights, spikes)
     await FallingEdge(dut.clk)
 
     result   = unpack_acc(dut.acc_out.value.to_unsigned())
-    expected = (weights.astype(np.int32) * acts.astype(np.int32)[:, None]).sum(axis=0).tolist()
+    expected = [1, 2, 3, 4, 5, 6, 7, 8]   # weights[0] × spike=1
     assert result == expected, f"Expected {expected}, got {result}"
 
 
 @cocotb.test()
 async def test_representative_matvec(dut):
     """Representative v1 tile: 8 outputs × 200 inputs, random INT8 weights,
-    binary spike activations. Reference computed with numpy INT32 arithmetic."""
+    binary spike activations (~10% firing rate). Reference from numpy INT32."""
     await init(dut)
     rng = np.random.default_rng(42)
 
     weights = rng.integers(-128, 128, (200, N), dtype=np.int8)
-    # Binary spikes: ~10% firing rate (typical for regularised SNN)
-    spikes  = rng.choice([0, 1], size=200, p=[0.9, 0.1]).astype(np.int8)
+    spikes  = rng.choice([0, 1], size=200, p=[0.9, 0.1]).astype(np.uint8)
 
     await run_matvec(dut, weights, spikes)
     await FallingEdge(dut.clk)
 
     result   = unpack_acc(dut.acc_out.value.to_unsigned())
     expected = (weights.astype(np.int32) * spikes.astype(np.int32)[:, None]).sum(axis=0).tolist()
-    assert result == expected, f"Expected {expected}, got {result}"
-
-
-@cocotb.test()
-async def test_signed_mixed(dut):
-    """Negative weights and negative activations produce correct signed accumulation."""
-    await init(dut)
-    weights = np.array([[-1, -2, -3, -4, -5, -6, -7, -8]], dtype=np.int8)
-    acts    = np.array([-10], dtype=np.int8)
-    await run_matvec(dut, weights, acts)
-    await FallingEdge(dut.clk)
-
-    result   = unpack_acc(dut.acc_out.value.to_unsigned())
-    expected = (weights.astype(np.int32) * acts.astype(np.int32)[:, None]).sum(axis=0).tolist()
     assert result == expected, f"Expected {expected}, got {result}"

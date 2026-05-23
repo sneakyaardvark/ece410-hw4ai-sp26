@@ -13,7 +13,7 @@
 //   weight_in     in     64       8× INT8 weights, one per MAC unit
 //   acc_clear     in     1        Forwarded to DUT acc_clear
 //   act_valid     in     1        Forwarded to DUT act_valid
-//   act_in        in     8        Activation broadcast to all MAC units
+//   act_in        in     1        Binary spike broadcast to all MAC units
 //   acc_out       out    256      8× INT32 accumulated dot products
 
 module tb_snn_mac_array (
@@ -23,13 +23,12 @@ module tb_snn_mac_array (
     input  logic [63:0]         weight_in,
     input  logic                acc_clear,
     input  logic                act_valid,
-    input  logic signed [7:0]   act_in,
+    input  logic                act_in,
     output logic [255:0]        acc_out
 );
 
     snn_mac_array #(
         .N        (8),
-        .ACT_W    (8),
         .WEIGHT_W (8),
         .ACC_W    (32)
     ) dut (

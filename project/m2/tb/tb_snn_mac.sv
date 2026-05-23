@@ -13,7 +13,7 @@
 //   weight_in     in     8       Forwarded to DUT weight_in
 //   acc_clear     in     1       Forwarded to DUT acc_clear
 //   act_valid     in     1       Forwarded to DUT act_valid
-//   act_in        in     8       Forwarded to DUT act_in
+//   act_in        in     1       Binary spike forwarded to DUT act_in
 //   acc_out       out    32      Forwarded from DUT acc_out
 
 module tb_snn_mac (
@@ -23,12 +23,11 @@ module tb_snn_mac (
     input  logic signed [7:0]   weight_in,
     input  logic                acc_clear,
     input  logic                act_valid,
-    input  logic signed [7:0]   act_in,
+    input  logic                act_in,
     output logic signed [31:0]  acc_out
 );
 
     snn_mac #(
-        .ACT_W    (8),
         .WEIGHT_W (8),
         .ACC_W    (32)
     ) dut (

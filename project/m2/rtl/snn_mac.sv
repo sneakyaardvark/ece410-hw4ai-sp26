@@ -1,11 +1,17 @@
 `default_nettype none
 
 // Module: snn_mac
-// Description: Single multiply-accumulate unit for the SNN MAC array. Holds one
-//              INT8 weight and accumulates (weight * activation) into an INT32
-//              accumulator. When weight_load and act_valid are asserted on the
-//              same cycle, weight_in is forwarded directly to the multiplier so
-//              the new weight takes effect immediately (no stall needed).
+// Description: Single conditional-accumulate unit for the SNN accelerator.
+//              Holds one INT8 weight and conditionally adds it to an INT32
+//              accumulator when a binary spike input is high. Replaces the
+//              INT8×INT8 multiplier with a mux+adder, avoiding DSP-slice
+//              inference (and enabling 8–32× more units in the same area).
+//              When weight_load and act_valid are asserted on the same cycle,
+//              weight_in is forwarded directly so the new weight takes effect
+//              immediately (no stall needed).
+//
+// Recurrence per active cycle:
+//   new_acc = spike ? acc + weight : acc
 //
 // Ports:
 //   Name          Dir    Width          Purpose
@@ -13,19 +19,16 @@
 //   clk           in     1              System clock (50 MHz, single domain)
 //   rst           in     1              Synchronous active-high reset
 //   weight_load   in     1              Strobe: latch weight_in into weight_reg;
-//                                         also forwards weight_in to the
-//                                         multiplier this cycle if act_valid set
+//                                         also forwards weight_in to the adder
+//                                         this cycle if act_valid set
 //   weight_in     in     WEIGHT_W (8)   INT8 signed weight value to load
 //   acc_clear     in     1              Strobe: reset accumulator to 0 (takes
 //                                         priority over act_valid)
-//   act_valid     in     1              Strobe: multiply-accumulate into acc_reg
-//                                         this cycle
-//   act_in        in     ACT_W (8)      INT8 signed activation (0x00 or 0x01
-//                                         for spike inputs; general INT8 otherwise)
+//   act_valid     in     1              Strobe: conditionally accumulate this cycle
+//   act_in        in     1              Binary spike: 1 = add weight, 0 = no-op
 //   acc_out       out    ACC_W (32)     INT32 signed accumulated dot product
 
 module snn_mac #(
-    parameter int ACT_W    = 8,
     parameter int WEIGHT_W = 8,
     parameter int ACC_W    = 32
 ) (
@@ -35,7 +38,7 @@ module snn_mac #(
     input  logic signed [WEIGHT_W-1:0]  weight_in,
     input  logic                        acc_clear,
     input  logic                        act_valid,
-    input  logic signed [ACT_W-1:0]     act_in,
+    input  logic                        act_in,
     output logic signed [ACC_W-1:0]     acc_out
 );
 
@@ -57,7 +60,7 @@ module snn_mac #(
             if (acc_clear)
                 acc_reg <= '0;
             else if (act_valid)
-                acc_reg <= acc_reg + ACC_W'(weight_mux * act_in);
+                acc_reg <= acc_reg + (act_in ? ACC_W'(weight_mux) : '0);
         end
     end
 

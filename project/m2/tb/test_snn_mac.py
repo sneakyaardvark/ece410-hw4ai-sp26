@@ -2,11 +2,11 @@
 
 Tests:
   - reset clears accumulator and weight register
-  - weight_load latches weight_in
-  - act_valid accumulates weight * activation each cycle
+  - spike=1 adds the weight; spike=0 is a no-op
   - acc_clear resets accumulator to zero
   - acc_clear takes priority over act_valid on the same cycle
-  - signed arithmetic: negative weight, negative activation, mixed signs
+  - negative INT8 weights produce negative accumulation
+  - weight register persists across acc_clear cycles
 """
 
 import cocotb
@@ -40,11 +40,11 @@ async def load_weight(dut, weight: int):
     dut.weight_in.value   = 0
 
 
-async def stream_activations(dut, acts: list[int]):
-    """Drive act_valid + act_in for each activation value in sequence."""
+async def stream_spikes(dut, spikes: list[int]):
+    """Drive act_valid + act_in for each binary spike in sequence."""
     dut.act_valid.value = 1
-    for a in acts:
-        dut.act_in.value = a
+    for s in spikes:
+        dut.act_in.value = s
         await RisingEdge(dut.clk)
     dut.act_valid.value = 0
     dut.act_in.value    = 0
@@ -71,13 +71,38 @@ async def test_reset(dut):
 
 
 @cocotb.test()
-async def test_weight_load_and_accumulate(dut):
-    """Load weight=5, stream 4 activations of value 3; expect acc=60."""
+async def test_spike_one_accumulates(dut):
+    """Spike=1 adds the weight each cycle: weight=5, 4 spikes → acc=20."""
     await init(dut)
     await load_weight(dut, 5)
-    await stream_activations(dut, [3, 3, 3, 3])
-    await FallingEdge(dut.clk)  # sample after last rising edge settles
-    expected = 5 * 3 * 4  # 60
+    await stream_spikes(dut, [1, 1, 1, 1])
+    await FallingEdge(dut.clk)
+    expected = 5 * 4
+    assert dut.acc_out.value.to_signed() == expected, (
+        f"Expected {expected}, got {dut.acc_out.value.to_signed()}"
+    )
+
+
+@cocotb.test()
+async def test_spike_zero_no_op(dut):
+    """Spike=0 must not change the accumulator."""
+    await init(dut)
+    await load_weight(dut, 99)
+    await stream_spikes(dut, [0, 0, 0])
+    await FallingEdge(dut.clk)
+    assert dut.acc_out.value.to_signed() == 0, (
+        f"Expected 0 (no spikes), got {dut.acc_out.value.to_signed()}"
+    )
+
+
+@cocotb.test()
+async def test_mixed_spikes(dut):
+    """Only spike=1 cycles contribute: weight=7, spikes=[1,0,1,0,1] → acc=21."""
+    await init(dut)
+    await load_weight(dut, 7)
+    await stream_spikes(dut, [1, 0, 1, 0, 1])
+    await FallingEdge(dut.clk)
+    expected = 7 * 3
     assert dut.acc_out.value.to_signed() == expected, (
         f"Expected {expected}, got {dut.acc_out.value.to_signed()}"
     )
@@ -85,10 +110,10 @@ async def test_weight_load_and_accumulate(dut):
 
 @cocotb.test()
 async def test_acc_clear(dut):
-    """Accumulate some values, clear, then verify acc_out is 0."""
+    """Accumulate some spikes, clear, then verify acc_out is 0."""
     await init(dut)
     await load_weight(dut, 7)
-    await stream_activations(dut, [2, 2, 2])
+    await stream_spikes(dut, [1, 1, 1])
     await clear_acc(dut)
     await FallingEdge(dut.clk)
     assert dut.acc_out.value.to_signed() == 0, (
@@ -100,13 +125,13 @@ async def test_acc_clear(dut):
 async def test_clear_priority_over_act_valid(dut):
     """When acc_clear and act_valid are both asserted, acc_clear wins."""
     await init(dut)
-    await load_weight(dut, 4)
-    await stream_activations(dut, [10])  # acc = 40
+    await load_weight(dut, 10)
+    await stream_spikes(dut, [1, 1, 1, 1])  # acc = 40
 
     # Assert both simultaneously
     dut.acc_clear.value = 1
     dut.act_valid.value = 1
-    dut.act_in.value    = 10
+    dut.act_in.value    = 1
     await RisingEdge(dut.clk)
     dut.acc_clear.value = 0
     dut.act_valid.value = 0
@@ -118,26 +143,13 @@ async def test_clear_priority_over_act_valid(dut):
 
 
 @cocotb.test()
-async def test_signed_negative_weight(dut):
-    """Negative weight × positive activation produces negative accumulation."""
+async def test_negative_weight(dut):
+    """Negative INT8 weight with spike=1 produces negative accumulation."""
     await init(dut)
     await load_weight(dut, -3)          # 0xFD in int8
-    await stream_activations(dut, [4, 4])
+    await stream_spikes(dut, [1, 1])
     await FallingEdge(dut.clk)
-    expected = -3 * 4 * 2  # -24
-    assert dut.acc_out.value.to_signed() == expected, (
-        f"Expected {expected}, got {dut.acc_out.value.to_signed()}"
-    )
-
-
-@cocotb.test()
-async def test_signed_both_negative(dut):
-    """Negative weight × negative activation produces positive accumulation."""
-    await init(dut)
-    await load_weight(dut, -6)
-    await stream_activations(dut, [-5])
-    await FallingEdge(dut.clk)
-    expected = (-6) * (-5)  # 30
+    expected = -3 * 2
     assert dut.acc_out.value.to_signed() == expected, (
         f"Expected {expected}, got {dut.acc_out.value.to_signed()}"
     )
@@ -145,28 +157,28 @@ async def test_signed_both_negative(dut):
 
 @cocotb.test()
 async def test_weight_held_across_activations(dut):
-    """Weight register persists; loading once covers multiple activation streams."""
+    """Weight register persists; loading once covers multiple spike streams."""
     await init(dut)
-    await load_weight(dut, 2)
-    await stream_activations(dut, [1, 1, 1])   # acc = 6
+    await load_weight(dut, 4)
+    await stream_spikes(dut, [1, 1, 1])   # acc = 12
     await clear_acc(dut)
-    # No second weight_load — weight_reg should still hold 2
-    await stream_activations(dut, [5, 5])
+    # No second weight_load — weight_reg should still hold 4
+    await stream_spikes(dut, [1, 1])
     await FallingEdge(dut.clk)
-    expected = 2 * 5 * 2  # 20
+    expected = 4 * 2   # 8
     assert dut.acc_out.value.to_signed() == expected, (
         f"Expected {expected}, got {dut.acc_out.value.to_signed()}"
     )
 
 
 @cocotb.test()
-async def test_max_positive_accumulation(dut):
-    """127 * 127 * 200 = 3,225,800 — well within int32 range."""
+async def test_max_weight_200_spikes(dut):
+    """127 * 200 = 25,400 — well within int32 range."""
     await init(dut)
     await load_weight(dut, 127)
-    await stream_activations(dut, [127] * 200)
+    await stream_spikes(dut, [1] * 200)
     await FallingEdge(dut.clk)
-    expected = 127 * 127 * 200
+    expected = 127 * 200
     assert dut.acc_out.value.to_signed() == expected, (
         f"Expected {expected}, got {dut.acc_out.value.to_signed()}"
     )
