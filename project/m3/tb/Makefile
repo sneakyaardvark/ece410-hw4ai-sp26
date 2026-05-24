@@ -15,6 +15,7 @@ TOP_SOURCES = \
 	$(M2_RTL)/snn_mac_array.sv \
 	$(M2_RTL)/snn_lif_cell.sv \
 	$(M2_RTL)/snn_lif_bank.sv \
+	$(M2_RTL)/v1_sram_bank.sv \
 	$(M2_RTL)/compute_core.sv \
 	$(M2_RTL)/interface.sv \
 	$(M3_RTL)/top.sv \
@@ -25,6 +26,7 @@ WAVE_SOURCES = \
 	$(M2_RTL)/snn_mac_array.sv \
 	$(M2_RTL)/snn_lif_cell.sv \
 	$(M2_RTL)/snn_lif_bank.sv \
+	$(M2_RTL)/v1_sram_bank.sv \
 	$(M2_RTL)/compute_core.sv \
 	$(M2_RTL)/interface.sv \
 	$(M3_RTL)/top.sv \

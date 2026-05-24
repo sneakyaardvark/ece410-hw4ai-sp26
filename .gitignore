@@ -207,3 +207,15 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# cocotb simulation artifacts
+results.xml
+sim_build*/
+*.vcd
+*.vvp
+
+# OpenLane run directories (large; reports committed separately)
+project/m3/synth/runs/
+
+# Full timing report exceeds GitHub 100 MB limit; commit trim + gz instead
+project/m3/synth/timing_report.txt

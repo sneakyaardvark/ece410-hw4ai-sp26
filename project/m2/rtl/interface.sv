@@ -234,13 +234,13 @@ module spi_interface #(
                                 end else if (rx_addr == BETA_HI) begin
                                     beta[15:8]  <= rx_byte_now;
                                 end else if (rx_addr == THRESH_B0) begin
-                                    threshold[7:0]   <= STATE_W'(rx_byte_now);
+                                    threshold[7:0]   <= rx_byte_now;
                                 end else if (rx_addr == THRESH_B1) begin
-                                    threshold[15:8]  <= STATE_W'(rx_byte_now);
+                                    threshold[15:8]  <= rx_byte_now;
                                 end else if (rx_addr == THRESH_B2) begin
-                                    threshold[23:16] <= STATE_W'(rx_byte_now);
+                                    threshold[23:16] <= rx_byte_now;
                                 end else if (rx_addr == THRESH_B3) begin
-                                    threshold[31:24] <= STATE_W'(rx_byte_now);
+                                    threshold[31:24] <= rx_byte_now;
                                 end else begin
                                     for (int k = 0; k < NB_BYTES; k++) begin
                                         if (rx_addr == SPIKE_IN_BASE + 16'(k))

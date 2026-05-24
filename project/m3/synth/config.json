@@ -1,0 +1,28 @@
+{
+    "DESIGN_NAME": "top",
+    "VERILOG_FILES": [
+        "dir::../../m2/rtl/snn_mac.sv",
+        "dir::../../m2/rtl/snn_mac_array.sv",
+        "dir::../../m2/rtl/snn_lif_cell.sv",
+        "dir::../../m2/rtl/snn_lif_bank.sv",
+        "dir::../../m2/rtl/v1_sram_bank.sv",
+        "dir::../../m2/rtl/compute_core.sv",
+        "dir::../../m2/rtl/interface.sv",
+        "dir::../rtl/top.sv"
+    ],
+    "VERILOG_FILES_BLACKBOX": [
+        "dir::sky130_sram_stub.v"
+    ],
+    "CLOCK_PORT": "clk",
+    "CLOCK_PERIOD": 20,
+    "PDK": "sky130A",
+    "STD_CELL_LIBRARY": "sky130_fd_sc_hd",
+    "SYNTH_STRATEGY": "AREA 0",
+    "VERILOG_DEFINES": ["SYNTHESIS"],
+    "EXTRA_LEFS": [
+        "/home/andrew/.volare/volare/sky130/versions/0fe599b2afb6708d281543108caf8310912f54af/sky130A/libs.ref/sky130_sram_macros/lef/sky130_sram_1kbyte_1rw1r_8x1024_8.lef"
+    ],
+    "EXTRA_LIBS": [
+        "/home/andrew/.volare/volare/sky130/versions/0fe599b2afb6708d281543108caf8310912f54af/sky130A/libs.ref/sky130_sram_macros/lib/sky130_sram_1kbyte_1rw1r_8x1024_8_TT_1p8V_25C.lib"
+    ]
+}

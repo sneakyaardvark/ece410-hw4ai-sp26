@@ -1,0 +1,15 @@
+   Number of cells:             1261907
+     sky130_fd_sc_hd__dfxtp_2    22325
+     sky130_sram_1kbyte_1rw1r_8x1024_8     40
+   Area for cell type \sky130_sram_1kbyte_1rw1r_8x1024_8 is unknown!
+   Chip area for module '\top': 12475476.220881
+   Number of wires:             1262192
+   Number of wire bits:         1262192
+   Number of public wires:       22655
+   Number of public wire bits:   22655
+   Number of ports:                  8
+   Number of port bits:              8
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:             1261907

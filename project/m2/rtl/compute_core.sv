@@ -125,27 +125,28 @@ module compute_core #(
 
     // -------------------------------------------------------------------------
     // v1 weight SRAM — eight byte-wide banks, one per MAC output lane.
-    // Bank b holds the WEIGHT_W-bit weight for MAC unit b at each word address.
-    // Word address = row * NB_TILES + tile (same layout as before).
-    //
-    // Each bank is V1_WORDS × WEIGHT_W = 5000 × 8 = 40 Kbit → inferred as BRAM.
-    // Per-bank write enables make byte-granular loading trivially expressible.
-    // The read port is registered (1-cycle latency) to satisfy BRAM read timing.
+    // Each bank is V1_WORDS × WEIGHT_W = 5000 × 8-bit, implemented as five
+    // sky130_sram_1kbyte_1rw1r_8x1024_8 macros tiled in depth (v1_sram_bank).
+    // Per-bank write enables (from weight_wr_addr[2:0]) give byte-granular
+    // loading. The read port has 1-cycle latency (synchronous inside the macro).
     // -------------------------------------------------------------------------
-    logic [WEIGHT_W-1:0] v1_mem   [NB_MACS][V1_WORDS];
-    logic [WEIGHT_W-1:0] v1_rd_r  [NB_MACS];   // registered read output
+    logic [WEIGHT_W-1:0] v1_rd_r [NB_MACS];   // registered read output from macros
 
-    // BRAM write+read: one generate block per bank so each bank gets its own
-    // write enable — the pattern synthesis tools map to simple dual-port BRAM.
     genvar gb;
     generate
-        for (gb = 0; gb < NB_MACS; gb++) begin : gen_bram
-            always_ff @(posedge clk) begin
-                if (weight_wr_en &&
-                        weight_wr_addr[$clog2(NB_MACS)-1:0] == $clog2(NB_MACS)'(gb))
-                    v1_mem[gb][weight_wr_addr[15:$clog2(NB_MACS)]] <= weight_wr_data;
-                v1_rd_r[gb] <= v1_mem[gb][v1_rd_addr];
-            end
+        for (gb = 0; gb < NB_MACS; gb++) begin : gen_sram
+            v1_sram_bank #(
+                .DEPTH       (V1_WORDS),
+                .MACRO_DEPTH (1024)
+            ) u_bank (
+                .clk     (clk),
+                .wr_en   (weight_wr_en &&
+                          weight_wr_addr[$clog2(NB_MACS)-1:0] == $clog2(NB_MACS)'(gb)),
+                .wr_addr (weight_wr_addr[15:$clog2(NB_MACS)]),
+                .wr_data (weight_wr_data),
+                .rd_addr (v1_rd_addr),
+                .rd_data (v1_rd_r[gb])
+            );
         end
     endgenerate
 
@@ -282,7 +283,7 @@ module compute_core #(
                 // mac_active is gated off when act_count=0 (empty tile pass).
                 S_TILE_EXEC: begin
                     if (act_count == '0 ||
-                            act_ptr == ROW_W'(act_count - 1)) begin
+                            act_ptr == (act_count - 1'b1)) begin
                         act_ptr <= '0;
                         state   <= S_TILE_DRAIN;
                     end else begin
@@ -311,8 +312,8 @@ module compute_core #(
                 // collected here. Neuron NB_HIDDEN-1 is collected in S_STEP_DONE.
                 S_LIF_UPDATE: begin
                     if (lif_idx != '0) begin
-                        if (lif_spike_vec[ACT_IDX_W'(lif_idx - 1)]) begin
-                            act_list[act_count] <= ACT_IDX_W'(lif_idx - 1);
+                        if (lif_spike_vec[lif_idx - 1'b1]) begin
+                            act_list[act_count] <= lif_idx - 1'b1;
                             act_count           <= act_count + 1'b1;
                         end
                     end
