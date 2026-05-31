@@ -32,7 +32,16 @@ WAVE_SOURCES = \
 	$(M3_RTL)/top.sv \
 	$(PWD)/tb_top_wave.sv
 
-.PHONY: top wave all
+BENCH_SOURCES = \
+	$(M2_RTL)/snn_mac.sv \
+	$(M2_RTL)/snn_mac_array.sv \
+	$(M2_RTL)/snn_lif_cell.sv \
+	$(M2_RTL)/snn_lif_bank.sv \
+	$(M2_RTL)/v1_sram_bank.sv \
+	$(M2_RTL)/compute_core.sv \
+	$(PWD)/tb_bench.sv
+
+.PHONY: top wave bench all
 
 top:
 	$(MAKE) -f $(COCOTB_MAKEFILES)/Makefile.sim \
@@ -40,6 +49,13 @@ top:
 		VERILOG_SOURCES="$(TOP_SOURCES)" \
 		COCOTB_TEST_MODULES=test_top \
 		SIM_BUILD=sim_build_top
+
+bench:
+	$(MAKE) -f $(COCOTB_MAKEFILES)/Makefile.sim \
+		TOPLEVEL=tb_bench \
+		VERILOG_SOURCES="$(BENCH_SOURCES)" \
+		COCOTB_TEST_MODULES=test_bench \
+		SIM_BUILD=sim_build_bench
 
 wave:
 	$(MAKE) -f $(COCOTB_MAKEFILES)/Makefile.sim \
