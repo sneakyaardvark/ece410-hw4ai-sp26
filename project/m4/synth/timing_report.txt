@@ -1,0 +1,290 @@
+
+===========================================================================
+report_checks -unconstrained
+===========================================================================
+======================= nom_tt_025C_1v80 Corner ===================================
+
+Startpoint: rst (input port clocked by clk)
+Endpoint: _2486062_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+Fanout         Cap        Slew       Delay        Time   Description
+---------------------------------------------------------------------------------------------
+                      0.150000    0.000000    0.000000   clock clk (rise edge)
+                                  0.000000    0.000000   clock network delay (ideal)
+                                  4.000000    4.000000 ^ input external delay
+  6121   28.341122  126.457016   86.397354   90.397354 ^ rst (in)
+                                                         rst (net)
+                    126.457016    0.000000   90.397354 ^ _1244522_/A (sky130_fd_sc_hd__inv_2)
+  7401   16.566210    0.000000 1580.457397 1670.854858 v _1244522_/Y (sky130_fd_sc_hd__inv_2)
+                                                         _0704520_ (net)
+                      0.000000    0.000000 1670.854858 v _1842025_/B1 (sky130_fd_sc_hd__o21ai_2)
+     1    0.004522    0.104146    0.036493 1670.891357 ^ _1842025_/Y (sky130_fd_sc_hd__o21ai_2)
+                                                         _0864182_ (net)
+                      0.104146    0.000000 1670.891357 ^ _1842040_/B1 (sky130_fd_sc_hd__o21ai_2)
+     2    0.008309    0.055989    0.078558 1670.969849 v _1842040_/Y (sky130_fd_sc_hd__o21ai_2)
+                                                         _0864197_ (net)
+                      0.055989    0.000000 1670.969849 v _1842046_/B1 (sky130_fd_sc_hd__a21oi_2)
+     2    0.009079    0.147265    0.145064 1671.114990 ^ _1842046_/Y (sky130_fd_sc_hd__a21oi_2)
+                                                         _0864204_ (net)
+                      0.147265    0.000000 1671.114990 ^ _1842049_/B1 (sky130_fd_sc_hd__o21ai_2)
+     2    0.005452    0.054212    0.078444 1671.193359 v _1842049_/Y (sky130_fd_sc_hd__o21ai_2)
+                                                         _0864207_ (net)
+                      0.054212    0.000000 1671.193359 v _1842056_/B1 (sky130_fd_sc_hd__a21oi_2)
+     2    0.009079    0.147277    0.144382 1671.337769 ^ _1842056_/Y (sky130_fd_sc_hd__a21oi_2)
+                                                         _0864215_ (net)
+                      0.147277    0.000000 1671.337769 ^ _1842060_/B1 (sky130_fd_sc_hd__o21ai_2)
+     3    0.007638    0.061180    0.086857 1671.424561 v _1842060_/Y (sky130_fd_sc_hd__o21ai_2)
+                                                         _0864219_ (net)
+                      0.061180    0.000000 1671.424561 v _1842063_/B1 (sky130_fd_sc_hd__a31oi_2)
+     2    0.004830    0.141680    0.151658 1671.576294 ^ _1842063_/Y (sky130_fd_sc_hd__a31oi_2)
+                                                         _0864223_ (net)
+                      0.141680    0.000000 1671.576294 ^ _1842065_/B1 (sky130_fd_sc_hd__o31a_2)
+     2    0.006972    0.057646    0.174509 1671.750732 ^ _1842065_/X (sky130_fd_sc_hd__o31a_2)
+                                                         _0864225_ (net)
+                      0.057646    0.000000 1671.750732 ^ _1842070_/B1 (sky130_fd_sc_hd__o31a_2)
+    25    0.101051    0.540711    0.494765 1672.245605 ^ _1842070_/X (sky130_fd_sc_hd__o31a_2)
+                                                         _0864230_ (net)
+                      0.540711    0.000000 1672.245605 ^ _1842080_/B1 (sky130_fd_sc_hd__o21a_2)
+     8    0.028160    0.158952    0.321052 1672.566650 ^ _1842080_/X (sky130_fd_sc_hd__o21a_2)
+                                                         _0864240_ (net)
+                      0.158952    0.000000 1672.566650 ^ _1842082_/S (sky130_fd_sc_hd__mux2_1)
+     1    0.001681    0.058707    0.324462 1672.891113 v _1842082_/X (sky130_fd_sc_hd__mux2_1)
+                                                         _0007159_ (net)
+                      0.058707    0.000000 1672.891113 v _2486062_/D (sky130_fd_sc_hd__dfxtp_2)
+                                           1672.891113   data arrival time
+
+                      0.150000   20.000000   20.000000   clock clk (rise edge)
+                                  0.000000   20.000000   clock network delay (ideal)
+                                 -0.250000   19.750002   clock uncertainty
+                                  0.000000   19.750002   clock reconvergence pessimism
+                                             19.750002 ^ _2486062_/CLK (sky130_fd_sc_hd__dfxtp_2)
+                                 -0.094308   19.655693   library setup time
+                                             19.655693   data required time
+---------------------------------------------------------------------------------------------
+                                             19.655693   data required time
+                                           -1672.891113   data arrival time
+---------------------------------------------------------------------------------------------
+                                           -1653.235352   slack (VIOLATED)
+
+
+
+
+===========================================================================
+report_checks --slack_max -0.01
+============================================================================
+======================= nom_tt_025C_1v80 Corner ===================================
+
+Startpoint: rst (input port clocked by clk)
+Endpoint: _2486062_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+Fanout         Cap        Slew       Delay        Time   Description
+---------------------------------------------------------------------------------------------
+                      0.150000    0.000000    0.000000   clock clk (rise edge)
+                                  0.000000    0.000000   clock network delay (ideal)
+                                  4.000000    4.000000 ^ input external delay
+  6121   28.341122  126.457016   86.397354   90.397354 ^ rst (in)
+                                                         rst (net)
+                    126.457016    0.000000   90.397354 ^ _1244522_/A (sky130_fd_sc_hd__inv_2)
+  7401   16.566210    0.000000 1580.457397 1670.854858 v _1244522_/Y (sky130_fd_sc_hd__inv_2)
+                                                         _0704520_ (net)
+                      0.000000    0.000000 1670.854858 v _1842025_/B1 (sky130_fd_sc_hd__o21ai_2)
+     1    0.004522    0.104146    0.036493 1670.891357 ^ _1842025_/Y (sky130_fd_sc_hd__o21ai_2)
+                                                         _0864182_ (net)
+                      0.104146    0.000000 1670.891357 ^ _1842040_/B1 (sky130_fd_sc_hd__o21ai_2)
+     2    0.008309    0.055989    0.078558 1670.969849 v _1842040_/Y (sky130_fd_sc_hd__o21ai_2)
+                                                         _0864197_ (net)
+                      0.055989    0.000000 1670.969849 v _1842046_/B1 (sky130_fd_sc_hd__a21oi_2)
+     2    0.009079    0.147265    0.145064 1671.114990 ^ _1842046_/Y (sky130_fd_sc_hd__a21oi_2)
+                                                         _0864204_ (net)
+                      0.147265    0.000000 1671.114990 ^ _1842049_/B1 (sky130_fd_sc_hd__o21ai_2)
+     2    0.005452    0.054212    0.078444 1671.193359 v _1842049_/Y (sky130_fd_sc_hd__o21ai_2)
+                                                         _0864207_ (net)
+                      0.054212    0.000000 1671.193359 v _1842056_/B1 (sky130_fd_sc_hd__a21oi_2)
+     2    0.009079    0.147277    0.144382 1671.337769 ^ _1842056_/Y (sky130_fd_sc_hd__a21oi_2)
+                                                         _0864215_ (net)
+                      0.147277    0.000000 1671.337769 ^ _1842060_/B1 (sky130_fd_sc_hd__o21ai_2)
+     3    0.007638    0.061180    0.086857 1671.424561 v _1842060_/Y (sky130_fd_sc_hd__o21ai_2)
+                                                         _0864219_ (net)
+                      0.061180    0.000000 1671.424561 v _1842063_/B1 (sky130_fd_sc_hd__a31oi_2)
+     2    0.004830    0.141680    0.151658 1671.576294 ^ _1842063_/Y (sky130_fd_sc_hd__a31oi_2)
+                                                         _0864223_ (net)
+                      0.141680    0.000000 1671.576294 ^ _1842065_/B1 (sky130_fd_sc_hd__o31a_2)
+     2    0.006972    0.057646    0.174509 1671.750732 ^ _1842065_/X (sky130_fd_sc_hd__o31a_2)
+                                                         _0864225_ (net)
+                      0.057646    0.000000 1671.750732 ^ _1842070_/B1 (sky130_fd_sc_hd__o31a_2)
+    25    0.101051    0.540711    0.494765 1672.245605 ^ _1842070_/X (sky130_fd_sc_hd__o31a_2)
+                                                         _0864230_ (net)
+                      0.540711    0.000000 1672.245605 ^ _1842080_/B1 (sky130_fd_sc_hd__o21a_2)
+     8    0.028160    0.158952    0.321052 1672.566650 ^ _1842080_/X (sky130_fd_sc_hd__o21a_2)
+                                                         _0864240_ (net)
+                      0.158952    0.000000 1672.566650 ^ _1842082_/S (sky130_fd_sc_hd__mux2_1)
+     1    0.001681    0.058707    0.324462 1672.891113 v _1842082_/X (sky130_fd_sc_hd__mux2_1)
+                                                         _0007159_ (net)
+                      0.058707    0.000000 1672.891113 v _2486062_/D (sky130_fd_sc_hd__dfxtp_2)
+                                           1672.891113   data arrival time
+
+                      0.150000   20.000000   20.000000   clock clk (rise edge)
+                                  0.000000   20.000000   clock network delay (ideal)
+                                 -0.250000   19.750002   clock uncertainty
+                                  0.000000   19.750002   clock reconvergence pessimism
+                                             19.750002 ^ _2486062_/CLK (sky130_fd_sc_hd__dfxtp_2)
+                                 -0.094308   19.655693   library setup time
+                                             19.655693   data required time
+---------------------------------------------------------------------------------------------
+                                             19.655693   data required time
+                                           -1672.891113   data arrival time
+---------------------------------------------------------------------------------------------
+                                           -1653.235352   slack (VIOLATED)
+
+===========================================================================
+ [trimmed: report_check_types max_slew/cap/fanout violator list (~1.5M lines omitted)]
+ [trimmed: report_parasitic_annotation (~1.26M lines omitted)]
+===========================================================================
+
+
+===========================================================================
+max slew violation count 1589191
+max fanout violation count 14497
+max cap violation count 427
+============================================================================
+
+===========================================================================
+check_setup -verbose -unconstrained_endpoints -multiple_clock -no_clock -no_input_delay -loops -generated_clocks
+===========================================================================
+Warning: There are 120 unconstrained endpoints.
+  u_core.gen_sram[0].u_bank.gen_macro[0].u_sram/csb1
+  u_core.gen_sram[0].u_bank.gen_macro[0].u_sram/web0
+  u_core.gen_sram[0].u_bank.gen_macro[0].u_sram/wmask0[0]
+  u_core.gen_sram[0].u_bank.gen_macro[1].u_sram/csb1
+  u_core.gen_sram[0].u_bank.gen_macro[1].u_sram/web0
+  u_core.gen_sram[0].u_bank.gen_macro[1].u_sram/wmask0[0]
+  u_core.gen_sram[0].u_bank.gen_macro[2].u_sram/csb1
+  u_core.gen_sram[0].u_bank.gen_macro[2].u_sram/web0
+  u_core.gen_sram[0].u_bank.gen_macro[2].u_sram/wmask0[0]
+  u_core.gen_sram[0].u_bank.gen_macro[3].u_sram/csb1
+  u_core.gen_sram[0].u_bank.gen_macro[3].u_sram/web0
+  u_core.gen_sram[0].u_bank.gen_macro[3].u_sram/wmask0[0]
+  u_core.gen_sram[0].u_bank.gen_macro[4].u_sram/csb1
+  u_core.gen_sram[0].u_bank.gen_macro[4].u_sram/web0
+  u_core.gen_sram[0].u_bank.gen_macro[4].u_sram/wmask0[0]
+  u_core.gen_sram[1].u_bank.gen_macro[0].u_sram/csb1
+  u_core.gen_sram[1].u_bank.gen_macro[0].u_sram/web0
+  u_core.gen_sram[1].u_bank.gen_macro[0].u_sram/wmask0[0]
+  u_core.gen_sram[1].u_bank.gen_macro[1].u_sram/csb1
+  u_core.gen_sram[1].u_bank.gen_macro[1].u_sram/web0
+  u_core.gen_sram[1].u_bank.gen_macro[1].u_sram/wmask0[0]
+  u_core.gen_sram[1].u_bank.gen_macro[2].u_sram/csb1
+  u_core.gen_sram[1].u_bank.gen_macro[2].u_sram/web0
+  u_core.gen_sram[1].u_bank.gen_macro[2].u_sram/wmask0[0]
+  u_core.gen_sram[1].u_bank.gen_macro[3].u_sram/csb1
+  u_core.gen_sram[1].u_bank.gen_macro[3].u_sram/web0
+  u_core.gen_sram[1].u_bank.gen_macro[3].u_sram/wmask0[0]
+  u_core.gen_sram[1].u_bank.gen_macro[4].u_sram/csb1
+  u_core.gen_sram[1].u_bank.gen_macro[4].u_sram/web0
+  u_core.gen_sram[1].u_bank.gen_macro[4].u_sram/wmask0[0]
+  u_core.gen_sram[2].u_bank.gen_macro[0].u_sram/csb1
+  u_core.gen_sram[2].u_bank.gen_macro[0].u_sram/web0
+  u_core.gen_sram[2].u_bank.gen_macro[0].u_sram/wmask0[0]
+  u_core.gen_sram[2].u_bank.gen_macro[1].u_sram/csb1
+  u_core.gen_sram[2].u_bank.gen_macro[1].u_sram/web0
+  u_core.gen_sram[2].u_bank.gen_macro[1].u_sram/wmask0[0]
+  u_core.gen_sram[2].u_bank.gen_macro[2].u_sram/csb1
+  u_core.gen_sram[2].u_bank.gen_macro[2].u_sram/web0
+  u_core.gen_sram[2].u_bank.gen_macro[2].u_sram/wmask0[0]
+  u_core.gen_sram[2].u_bank.gen_macro[3].u_sram/csb1
+  u_core.gen_sram[2].u_bank.gen_macro[3].u_sram/web0
+  u_core.gen_sram[2].u_bank.gen_macro[3].u_sram/wmask0[0]
+  u_core.gen_sram[2].u_bank.gen_macro[4].u_sram/csb1
+  u_core.gen_sram[2].u_bank.gen_macro[4].u_sram/web0
+  u_core.gen_sram[2].u_bank.gen_macro[4].u_sram/wmask0[0]
+  u_core.gen_sram[3].u_bank.gen_macro[0].u_sram/csb1
+  u_core.gen_sram[3].u_bank.gen_macro[0].u_sram/web0
+  u_core.gen_sram[3].u_bank.gen_macro[0].u_sram/wmask0[0]
+  u_core.gen_sram[3].u_bank.gen_macro[1].u_sram/csb1
+  u_core.gen_sram[3].u_bank.gen_macro[1].u_sram/web0
+  u_core.gen_sram[3].u_bank.gen_macro[1].u_sram/wmask0[0]
+  u_core.gen_sram[3].u_bank.gen_macro[2].u_sram/csb1
+  u_core.gen_sram[3].u_bank.gen_macro[2].u_sram/web0
+  u_core.gen_sram[3].u_bank.gen_macro[2].u_sram/wmask0[0]
+  u_core.gen_sram[3].u_bank.gen_macro[3].u_sram/csb1
+  u_core.gen_sram[3].u_bank.gen_macro[3].u_sram/web0
+  u_core.gen_sram[3].u_bank.gen_macro[3].u_sram/wmask0[0]
+  u_core.gen_sram[3].u_bank.gen_macro[4].u_sram/csb1
+  u_core.gen_sram[3].u_bank.gen_macro[4].u_sram/web0
+  u_core.gen_sram[3].u_bank.gen_macro[4].u_sram/wmask0[0]
+  u_core.gen_sram[4].u_bank.gen_macro[0].u_sram/csb1
+  u_core.gen_sram[4].u_bank.gen_macro[0].u_sram/web0
+  u_core.gen_sram[4].u_bank.gen_macro[0].u_sram/wmask0[0]
+  u_core.gen_sram[4].u_bank.gen_macro[1].u_sram/csb1
+  u_core.gen_sram[4].u_bank.gen_macro[1].u_sram/web0
+  u_core.gen_sram[4].u_bank.gen_macro[1].u_sram/wmask0[0]
+  u_core.gen_sram[4].u_bank.gen_macro[2].u_sram/csb1
+  u_core.gen_sram[4].u_bank.gen_macro[2].u_sram/web0
+  u_core.gen_sram[4].u_bank.gen_macro[2].u_sram/wmask0[0]
+  u_core.gen_sram[4].u_bank.gen_macro[3].u_sram/csb1
+  u_core.gen_sram[4].u_bank.gen_macro[3].u_sram/web0
+  u_core.gen_sram[4].u_bank.gen_macro[3].u_sram/wmask0[0]
+  u_core.gen_sram[4].u_bank.gen_macro[4].u_sram/csb1
+  u_core.gen_sram[4].u_bank.gen_macro[4].u_sram/web0
+  u_core.gen_sram[4].u_bank.gen_macro[4].u_sram/wmask0[0]
+  u_core.gen_sram[5].u_bank.gen_macro[0].u_sram/csb1
+  u_core.gen_sram[5].u_bank.gen_macro[0].u_sram/web0
+  u_core.gen_sram[5].u_bank.gen_macro[0].u_sram/wmask0[0]
+  u_core.gen_sram[5].u_bank.gen_macro[1].u_sram/csb1
+  u_core.gen_sram[5].u_bank.gen_macro[1].u_sram/web0
+  u_core.gen_sram[5].u_bank.gen_macro[1].u_sram/wmask0[0]
+  u_core.gen_sram[5].u_bank.gen_macro[2].u_sram/csb1
+  u_core.gen_sram[5].u_bank.gen_macro[2].u_sram/web0
+  u_core.gen_sram[5].u_bank.gen_macro[2].u_sram/wmask0[0]
+  u_core.gen_sram[5].u_bank.gen_macro[3].u_sram/csb1
+  u_core.gen_sram[5].u_bank.gen_macro[3].u_sram/web0
+  u_core.gen_sram[5].u_bank.gen_macro[3].u_sram/wmask0[0]
+  u_core.gen_sram[5].u_bank.gen_macro[4].u_sram/csb1
+  u_core.gen_sram[5].u_bank.gen_macro[4].u_sram/web0
+  u_core.gen_sram[5].u_bank.gen_macro[4].u_sram/wmask0[0]
+  u_core.gen_sram[6].u_bank.gen_macro[0].u_sram/csb1
+  u_core.gen_sram[6].u_bank.gen_macro[0].u_sram/web0
+  u_core.gen_sram[6].u_bank.gen_macro[0].u_sram/wmask0[0]
+  u_core.gen_sram[6].u_bank.gen_macro[1].u_sram/csb1
+  u_core.gen_sram[6].u_bank.gen_macro[1].u_sram/web0
+  u_core.gen_sram[6].u_bank.gen_macro[1].u_sram/wmask0[0]
+  u_core.gen_sram[6].u_bank.gen_macro[2].u_sram/csb1
+  u_core.gen_sram[6].u_bank.gen_macro[2].u_sram/web0
+  u_core.gen_sram[6].u_bank.gen_macro[2].u_sram/wmask0[0]
+  u_core.gen_sram[6].u_bank.gen_macro[3].u_sram/csb1
+  u_core.gen_sram[6].u_bank.gen_macro[3].u_sram/web0
+  u_core.gen_sram[6].u_bank.gen_macro[3].u_sram/wmask0[0]
+  u_core.gen_sram[6].u_bank.gen_macro[4].u_sram/csb1
+  u_core.gen_sram[6].u_bank.gen_macro[4].u_sram/web0
+  u_core.gen_sram[6].u_bank.gen_macro[4].u_sram/wmask0[0]
+  u_core.gen_sram[7].u_bank.gen_macro[0].u_sram/csb1
+  u_core.gen_sram[7].u_bank.gen_macro[0].u_sram/web0
+  u_core.gen_sram[7].u_bank.gen_macro[0].u_sram/wmask0[0]
+  u_core.gen_sram[7].u_bank.gen_macro[1].u_sram/csb1
+  u_core.gen_sram[7].u_bank.gen_macro[1].u_sram/web0
+  u_core.gen_sram[7].u_bank.gen_macro[1].u_sram/wmask0[0]
+  u_core.gen_sram[7].u_bank.gen_macro[2].u_sram/csb1
+  u_core.gen_sram[7].u_bank.gen_macro[2].u_sram/web0
+  u_core.gen_sram[7].u_bank.gen_macro[2].u_sram/wmask0[0]
+  u_core.gen_sram[7].u_bank.gen_macro[3].u_sram/csb1
+  u_core.gen_sram[7].u_bank.gen_macro[3].u_sram/web0
+  u_core.gen_sram[7].u_bank.gen_macro[3].u_sram/wmask0[0]
+  u_core.gen_sram[7].u_bank.gen_macro[4].u_sram/csb1
+  u_core.gen_sram[7].u_bank.gen_macro[4].u_sram/web0
+  u_core.gen_sram[7].u_bank.gen_macro[4].u_sram/wmask0[0]
+
+
+===========================================================================
+Worst Negative Slack (Setup)
+============================================================================
+nom_tt_025C_1v80: -1653.2354051464833
+
+
+===========================================================================
+Total Negative Slack (Setup)
+============================================================================
+nom_tt_025C_1v80: -16466156.113926206

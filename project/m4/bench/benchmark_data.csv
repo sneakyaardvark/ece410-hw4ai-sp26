@@ -1,0 +1,53 @@
+metric,platform,value,unit,notes
+latency_median,software_cpu,9.13,ms,torch 2.11.0+cpu median of 10 single-sample inferences
+throughput,software_cpu,109.5,samples/sec,1000/latency_ms
+memory_peak_rss,software_cpu,1397,MB,process-wide RSS via resource.getrusage
+energy_per_inf,software_cpu,593,mJ,rough estimate: 65W TDP x 9.13ms NOT measured
+
+latency_nominal,hw_compute_core,1.506,ms,closed-form at 10% sparsity (20/200 active); 75302 cycles x 20ns
+throughput_nominal,hw_compute_core,664,samples/sec,at 10% sparsity nominal operating point
+memory_onchip,hw_compute_core,43,KB,40KB weight SRAM + ~2.8KB DFFs
+energy_per_inf,hw_compute_core,0.223,mJ,148.06mW (pre-PNR power) x 1.506ms
+
+speedup_latency_nominal,hw_vs_sw,6.1,x,9.13ms / 1.506ms at 10% sparsity
+speedup_throughput_nominal,hw_vs_sw,6.1,x,664 / 109.5 at 10% sparsity
+energy_improvement,hw_vs_sw,2660,x,rough order-of-magnitude
+
+threshold_sweep_cycles_quiet,hw_compute_core,28278,cycles,recurrent activity collapses ~1 active/step
+threshold_sweep_latency_quiet,hw_compute_core,0.566,ms,28278 * 20ns
+threshold_sweep_active_quiet,hw_compute_core,1.2,neurons/step,measured in bench run
+threshold_sweep_throughput_quiet,hw_compute_core,1768,samples/sec,1000/0.566ms
+
+threshold_200_cycles,hw_compute_core,99703,cycles,threshold=200; ~30 active/step
+threshold_200_latency,hw_compute_core,1.994,ms,99703 * 20ns
+threshold_200_active,hw_compute_core,30,neurons/step,measured
+threshold_200_throughput,hw_compute_core,502,samples/sec,
+
+threshold_10_cycles,hw_compute_core,127053,cycles,threshold=10; ~41 active/step
+threshold_10_latency,hw_compute_core,2.541,ms,127053 * 20ns
+threshold_10_active,hw_compute_core,41,neurons/step,measured
+threshold_10_throughput,hw_compute_core,394,samples/sec,
+
+floor_cycles,hw_compute_core,27802,cycles,analytic floor: 0 active
+floor_latency,hw_compute_core,0.556,ms,
+ceiling_cycles,hw_compute_core,525302,cycles,analytic ceiling: 200 active every step
+ceiling_latency,hw_compute_core,10.506,ms,
+
+synops_per_inf,workload,400000,SynOps,100 steps x 20 active x 200 neurons (10% sparsity)
+ai_effective,hw_compute_core,0.664,SynOps/byte,back-computed: 0.266 GSynOps/s / 0.40 GB/s
+ai_lower_bound,hw_compute_core,0.45,SynOps/byte,no weight reuse analytic lower bound
+ai_upper_bound,hw_compute_core,0.83,SynOps/byte,full weight reuse analytic upper bound
+peak_compute,hw_compute_core,0.40,GSynOps/s,8 MAC lanes x 50 MHz
+peak_bandwidth,hw_compute_core,0.40,GB/s,8 SRAM banks x 1 byte/cycle x 50 MHz
+measured_throughput,hw_compute_core,0.266,GSynOps/s,400000 SynOps / 1.506ms
+
+clock_period,synth,20,ns,50 MHz target
+wns_preplace,synth,-1653.24,ns,reset-tree fanout artifact (see synth/timing_report.txt)
+total_cells,synth,1261907,cells,
+dff_count,synth,22325,DFFs,sky130_fd_sc_hd__dfxtp_2
+sram_macros,synth,40,macros,sky130_sram_1kbyte_1rw1r_8x1024_8 (8 banks x 5 tiles)
+chip_area,synth,12475476.22,um2,from area_report.txt
+power_total,synth,148.06,mW,pre-PNR TT corner nom_tt_025C_1v80
+power_sequential,synth,56.42,mW,38.1%
+power_macro,synth,75.87,mW,51.2% (SRAM dominant)
+power_combinational,synth,15.77,mW,10.7%
